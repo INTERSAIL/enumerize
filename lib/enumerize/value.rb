@@ -23,11 +23,34 @@ module Enumerize
 
     def to_xml(options = {})
       return unless options[:builder]
-      options[:builder].tag!(self.name, self.value)
+
+      opt = xml_serialize
+
+      if(opt.length == 1)
+        build_tag(options[:builder], self.name, opt[0])
+      else
+        opt.each { |o| build_tag(options[:builder], "#{self.name}-#{o}", o) }
+      end        
     end
+
+    def build_tag(builder, name, option)
+      value = if option == :value
+        self.value
+      elsif option == :name
+        self.to_s
+      elsif option == :text
+        self.text
+      end
+      builder.tag!(name, value)
+    end
+
 
     def name
       @attr.name
+    end
+
+    def xml_serialize
+      Array(@attr.xml_serialize || :value)
     end
 
     private
