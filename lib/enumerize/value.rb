@@ -21,6 +21,15 @@ module Enumerize
       coder.represent_object(self.class.superclass, @value)
     end
 
+    def to_xml(options = {})
+      return unless options[:builder]
+      options[:builder].tag!(self.name, self.value)
+    end
+
+    def name
+      @attr.name
+    end
+
     private
 
     def define_query_method(value)
