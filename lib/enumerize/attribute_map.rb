@@ -34,5 +34,9 @@ module Enumerize
         dependant << attr
       end
     end
+
+    def has_key?(name)
+      @attributes.has_key?(name)
+    end
   end
 end

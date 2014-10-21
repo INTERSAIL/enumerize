@@ -1,6 +1,6 @@
 module Enumerize
   class Attribute
-    attr_reader :name, :values, :default_value, :i18n_scope, :xml_serialize
+    attr_reader :name, :values, :default_value, :i18n_scope, :xml_serialize, :json_serialize
 
     def initialize(klass, name, options={})
       raise ArgumentError, ':in option is required' unless options[:in]
@@ -29,6 +29,11 @@ module Enumerize
       if options[:xml_serialize]
         raise ArgumentError, ':xml_serialize option accepts only one or more values from (:name, :value, :text)' unless Array(options[:xml_serialize]).all? { |s| [:value, :name, :text].include?(s) }
         @xml_serialize = options[:xml_serialize]
+      end
+
+      if options[:json_serialize]
+        raise ArgumentError, ':json_serialize option accepts only one value from (:name, :value, :text)' unless [:value, :name, :text].include?(options[:json_serialize])
+        @json_serialize = options[:json_serialize]
       end
     end
 

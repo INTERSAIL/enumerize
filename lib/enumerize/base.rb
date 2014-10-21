@@ -49,6 +49,15 @@ module Enumerize
       _set_default_value_for_enumerized_attributes
     end
 
+    def read_attribute_for_serialization(key)
+      if self.class.enumerized_attributes.has_key?(key)
+
+        send(key).value_for_serialization(:json)
+      else
+        super
+      end
+    end
+
     def read_attribute_for_validation(key)
       key = key.to_s
 

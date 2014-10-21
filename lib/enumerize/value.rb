@@ -7,7 +7,7 @@ module Enumerize
     attr_reader :value
 
     def initialize(attr, name, value=nil)
-      @attr  = attr
+      @attr = attr
       @value = value.nil? ? name.to_s : value
 
       super(name.to_s)
@@ -26,24 +26,33 @@ module Enumerize
 
       opt = xml_serialize
 
-      if(opt.length == 1)
+      if opt.length == 1
         build_tag(options[:builder], self.name, opt[0])
       else
         opt.each { |o| build_tag(options[:builder], "#{self.name}-#{o}", o) }
-      end        
+      end
     end
 
     def build_tag(builder, name, option)
-      value = if option == :value
-        self.value
-      elsif option == :name
-        self.to_s
-      elsif option == :text
-        self.text
-      end
-      builder.tag!(name, value)
+      builder.tag!(name, value_for_serialization(option))
     end
 
+    def value_for_serialization(option)
+        case option
+          when :value
+            self.value
+          when :name
+            self.to_s
+          when :text
+            self.text
+          when :json
+            value_for_serialization(self.json_serialize)
+          when :xml
+            value_for_serialization(self.xml_serialize)
+          else
+            self.to_s
+        end
+    end
 
     def name
       @attr.name
@@ -51,6 +60,10 @@ module Enumerize
 
     def xml_serialize
       Array(@attr.xml_serialize || :value)
+    end
+
+    def json_serialize
+      @attr.json_serialize || :value
     end
 
     private
