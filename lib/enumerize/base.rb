@@ -51,8 +51,8 @@ module Enumerize
 
     def read_attribute_for_serialization(key)
       if self.class.enumerized_attributes.has_key?(key)
-
-        send(key).value_for_serialization(:json)
+        v = send(key)
+        v && v.value_for_serialization(:json)
       else
         super
       end
